@@ -12,15 +12,15 @@ export interface FirebaseConfig {
 
 const STORAGE_KEY = "soneja_firebase_config";
 
-// Default configuration based on project "soneja-electronics"
+// Standalone / Local Storage configuration (unlinked from cloud)
 export const DEFAULT_FIREBASE_CONFIG: FirebaseConfig = {
-  apiKey: "AIzaSyBiNRxksfYYTmp8RZwXuTeVjo6OHw-Lkhc",
-  authDomain: "soneja-electronics.firebaseapp.com",
-  databaseURL: "https://soneja-electronics-default-rtdb.firebaseio.com",
-  projectId: "soneja-electronics",
-  storageBucket: "soneja-electronics.firebasestorage.app",
-  messagingSenderId: "533974413111",
-  appId: "1:533974413111:web:f7180e1702a6fc8d0b74b2",
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
 };
 
 export function getActiveFirebaseConfig(): FirebaseConfig | null {

@@ -89,7 +89,7 @@ export function getRtdbInstance(): Database | null {
 
   const config = getActiveFirebaseConfig() || DEFAULT_FIREBASE_CONFIG;
   if (!config || !config.apiKey || !config.projectId) {
-    notifyStatusUpdate({ connected: false, mode: "none", error: "Firebase credentials missing" });
+    notifyStatusUpdate({ connected: false, mode: "none", error: null });
     return null;
   }
 
