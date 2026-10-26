@@ -76,6 +76,11 @@ function sanitizeForFirebase(obj: any): any {
     const res: Record<string, any> = {};
     for (const [k, v] of Object.entries(obj)) {
       if (v !== undefined) {
+        if (k === "data_url" && typeof v === "string" && v.startsWith("data:")) {
+          // Do not send massive base64 files to Firebase Realtime Database
+          // The actual binary is preserved in IndexedDB
+          continue;
+        }
         res[k] = sanitizeForFirebase(v);
       }
     }
@@ -89,7 +94,7 @@ export function getRtdbInstance(): Database | null {
 
   const config = getActiveFirebaseConfig() || DEFAULT_FIREBASE_CONFIG;
   if (!config || !config.apiKey || !config.projectId) {
-    notifyStatusUpdate({ connected: false, mode: "none", error: null });
+    notifyStatusUpdate({ connected: false, mode: "none", error: "Firebase credentials missing" });
     return null;
   }
 
@@ -199,9 +204,25 @@ export function startRealtimeSync(queryClient: QueryClient) {
       const allOrders = val ? Object.values(val) : [];
       const deletedIds = getLocalDeletedIds("orders");
 
-      // Strictly filter out any deleted orders so they never show or re-save
-      const orders = (allOrders as any[])
+      const remoteOrders = (allOrders as any[])
         .filter((o) => o && o.id && !deletedIds.has(o.id) && !o.deleted_at);
+
+      const localOrders = getLocalStore<any[]>("orders", []);
+
+      // Non-destructive merge: preserve valid local orders while updating from remote
+      const orderMap = new Map<string, any>();
+      localOrders.forEach((o) => {
+        if (o && o.id && !deletedIds.has(o.id) && !o.deleted_at) {
+          orderMap.set(o.id, o);
+        }
+      });
+      remoteOrders.forEach((o) => {
+        if (o && o.id && !deletedIds.has(o.id) && !o.deleted_at) {
+          orderMap.set(o.id, o);
+        }
+      });
+
+      const orders = Array.from(orderMap.values());
       orders.sort((a: any, b: any) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
 
       // If any order in RTDB is found in deletedIds, actively purge it from RTDB
@@ -251,9 +272,23 @@ export function startRealtimeSync(queryClient: QueryClient) {
       const val = snapshot.val();
       const allProducts = val ? Object.values(val) : [];
       const deletedIds = getLocalDeletedIds("products");
-      const products = (allProducts as any[])
+      const remoteProducts = (allProducts as any[])
         .filter((p) => p && p.id && !deletedIds.has(p.id) && !p.deleted_at);
 
+      const localProducts = getLocalStore<any[]>("products", SEED_PRODUCTS);
+      const prodMap = new Map<string, any>();
+      localProducts.forEach((p) => {
+        if (p && p.id && !deletedIds.has(p.id) && !p.deleted_at) {
+          prodMap.set(p.id, p);
+        }
+      });
+      remoteProducts.forEach((p) => {
+        if (p && p.id && !deletedIds.has(p.id) && !p.deleted_at) {
+          prodMap.set(p.id, p);
+        }
+      });
+
+      const products = Array.from(prodMap.values());
       const currentOrders = getLocalStore<any[]>("orders", []);
       const reconciled = recalculateAllInventory(products, currentOrders);
       updateLocalStore("products", reconciled);

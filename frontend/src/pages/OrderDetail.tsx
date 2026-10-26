@@ -75,9 +75,11 @@ export default function OrderDetail({ kind }: { kind: Kind }) {
   function invalidateAll() {
     qc.invalidateQueries({ queryKey: [listKey] });
     qc.invalidateQueries({ queryKey: [listKey, id] });
+    qc.invalidateQueries({ queryKey: ["orders"] });
     qc.invalidateQueries({ queryKey: ["dashboard"] });
     qc.invalidateQueries({ queryKey: ["reports"] });
     qc.invalidateQueries({ queryKey: ["products"] });
+    qc.invalidateQueries({ queryKey: ["inventory"] });
   }
 
   const payMutation = useMutation({

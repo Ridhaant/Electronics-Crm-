@@ -9,21 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script>
-      // 1. Clean up any rogue service workers from other apps on this domain (e.g. Gem-Vault)
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(regs) {
-          for (var r of regs) { r.unregister(); }
-        });
-      }
-      // 2. Fix space typos or encoded spaces from browser address bar
-      var rawPath = window.location.pathname;
-      if (rawPath.includes('%20') || rawPath.includes(' ')) {
-        var cleanPath = rawPath.replace(/%20/g, '').replace(/ /g, '');
-        window.location.replace(window.location.origin + cleanPath + window.location.search + window.location.hash);
-      }
-    </script>
-    <script type="module" crossorigin src="./assets/index-D8j28Ozp.js"></script>
+    <script type="module" crossorigin src="./assets/index-B3GXBXdy.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-DogbDYjW.css">
   </head>
   <body>

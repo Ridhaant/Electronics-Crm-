@@ -213,7 +213,7 @@ export default function OrderList({ kind, title }: OrderListProps) {
                   <th className="hide-mobile">Ref No.</th>
                   <th className="hide-mobile">Date</th>
                   {kind === "sale" && <th>Credit / Due Terms</th>}
-                  {kind === "sale" && <th>Invoice Doc</th>}
+                  <th>{kind === "sale" ? "Invoice Doc" : "Bill / Challan"}</th>
                   <th style={{ textAlign: "right" }}>Total</th>
                   <th className="hide-mobile" style={{ textAlign: "right" }}>Paid</th>
                   <th className="hide-mobile" style={{ textAlign: "right" }}>Balance</th>
@@ -297,49 +297,47 @@ export default function OrderList({ kind, title }: OrderListProps) {
                         </div>
                       </td>
                     )}
-                    {kind === "sale" && (
-                      <td onClick={(e) => e.stopPropagation()} style={{ whiteSpace: "nowrap" }}>
-                        {o.invoice_file ? (
-                          <button
-                            type="button"
-                            className="btn btn-outline btn-xs"
-                            style={{
-                              borderColor: "var(--brand)",
-                              color: "var(--brand)",
-                              fontWeight: 700,
-                              fontSize: 11,
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 4,
-                              padding: "3px 8px",
-                            }}
-                            onClick={() => setViewingInvoiceOrder(o)}
-                            title={`Click to view attached invoice: ${o.invoice_file.name}`}
-                          >
-                            <span>📄</span>
-                            <span>View</span>
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            className="btn btn-ghost btn-xs"
-                            style={{
-                              color: "var(--muted)",
-                              fontSize: 11,
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 3,
-                              padding: "2px 6px",
-                            }}
-                            onClick={() => setUploadingInvoiceOrder(o)}
-                            title="Attach invoice copy (PDF / Image)"
-                          >
-                            <span>📤</span>
-                            <span>+ Attach</span>
-                          </button>
-                        )}
-                      </td>
-                    )}
+                    <td onClick={(e) => e.stopPropagation()} style={{ whiteSpace: "nowrap" }}>
+                      {o.invoice_file ? (
+                        <button
+                          type="button"
+                          className="btn btn-outline btn-xs"
+                          style={{
+                            borderColor: "var(--brand)",
+                            color: "var(--brand)",
+                            fontWeight: 700,
+                            fontSize: 11,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                            padding: "3px 8px",
+                          }}
+                          onClick={() => setViewingInvoiceOrder(o)}
+                          title={`Click to view attached invoice: ${o.invoice_file.name}`}
+                        >
+                          <span>📄</span>
+                          <span>View</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          style={{
+                            color: "var(--muted)",
+                            fontSize: 11,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 3,
+                            padding: "2px 6px",
+                          }}
+                          onClick={() => setUploadingInvoiceOrder(o)}
+                          title={kind === "sale" ? "Attach invoice copy (PDF / Image)" : "Attach supplier bill / challan"}
+                        >
+                          <span>📤</span>
+                          <span>+ Attach</span>
+                        </button>
+                      )}
+                    </td>
                     <td style={{ textAlign: "right", fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>{formatINR(o.total)}</td>
                     <td className="hide-mobile" style={{ textAlign: "right", color: "var(--success)", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{formatINR(o.amount_paid)}</td>
                     <td className="hide-mobile" style={{ textAlign: "right", color: o.balance > 0 ? "var(--error)" : "var(--muted)", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{formatINR(o.balance)}</td>
@@ -576,6 +574,9 @@ export default function OrderList({ kind, title }: OrderListProps) {
           onClose={() => setViewingInvoiceOrder(null)}
           onInvoiceUpdated={() => {
             qc.invalidateQueries({ queryKey: [kind === "sale" ? "sales" : "purchases"] });
+            qc.invalidateQueries({ queryKey: ["orders"] });
+            qc.invalidateQueries({ queryKey: ["dashboard"] });
+            qc.invalidateQueries({ queryKey: ["reports"] });
             setViewingInvoiceOrder(null);
           }}
           onOpenReplace={() => {
@@ -593,6 +594,9 @@ export default function OrderList({ kind, title }: OrderListProps) {
           onClose={() => setUploadingInvoiceOrder(null)}
           onSuccess={() => {
             qc.invalidateQueries({ queryKey: [kind === "sale" ? "sales" : "purchases"] });
+            qc.invalidateQueries({ queryKey: ["orders"] });
+            qc.invalidateQueries({ queryKey: ["dashboard"] });
+            qc.invalidateQueries({ queryKey: ["reports"] });
             setUploadingInvoiceOrder(null);
           }}
         />

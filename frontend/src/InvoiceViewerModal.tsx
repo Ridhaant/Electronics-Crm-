@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { formatFileSize, getInvoiceFromIdb, deleteInvoiceFromIdb, type InvoiceAttachment } from "./invoiceStorage";
-import { apiDelete } from "./api";
+import { formatFileSize, getInvoiceFromIdb, saveInvoiceToIdb, deleteInvoiceFromIdb, type InvoiceAttachment } from "./invoiceStorage";
+import { apiGet, apiDelete } from "./api";
 import { formatDateTime } from "./format";
 import { useToast } from "./toast";
 import { Spinner } from "./ui";
@@ -37,6 +37,23 @@ export function InvoiceViewerModal({
       }
       try {
         const idbInvoice = await getInvoiceFromIdb(order.id);
+        if (mounted && idbInvoice?.data_url) {
+          setInvoice(idbInvoice);
+          setLoading(false);
+          return;
+        }
+
+        // Check if API has full document
+        try {
+          const apiInv = await apiGet<InvoiceAttachment>(`/orders/${order.id}/invoice`);
+          if (mounted && apiInv && (apiInv as any).data_url) {
+            setInvoice(apiInv);
+            saveInvoiceToIdb(order.id, apiInv).catch(() => {});
+            setLoading(false);
+            return;
+          }
+        } catch {}
+
         if (mounted) {
           if (idbInvoice) {
             setInvoice(idbInvoice);

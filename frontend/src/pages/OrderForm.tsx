@@ -125,14 +125,26 @@ export default function OrderForm({ kind }: { kind: Kind }) {
       const finalNotes = notes.trim()
         ? (paymentTag && !notes.includes("[Payment:") ? `${notes.trim()} ${paymentTag}` : notes.trim())
         : paymentTag;
+
+      // Prepare lightweight invoice metadata for order storage
+      const invoiceMeta = attachedAttachment
+        ? {
+            name: attachedAttachment.name,
+            type: attachedAttachment.type,
+            size: attachedAttachment.size,
+            uploaded_at: attachedAttachment.uploaded_at,
+            has_attachment: true,
+          }
+        : existing?.invoice_file || null;
+
       const body = {
         party_id: isSale ? partyId : null,
-        party_name: isSale ? partyName : partyName.trim(),
+        party_name: partyName.trim() || (isSale ? "Counter Sale" : "Worldtech Distributor"),
         ref_no: refNo.trim() || null,
         notes: finalNotes,
         date: isoDate,
         credit_days: isSale ? Math.max(0, parseInt(String(creditDays)) || 0) : undefined,
-        invoice_file: isSale ? (attachedAttachment || (existing?.invoice_file || null)) : undefined,
+        invoice_file: isSale ? invoiceMeta : undefined,
         items: lines.map(l => ({ product_id: l.product_id, model: l.model, qty: parseFloat(l.qty) || 0, rate: parseFloat(l.rate) || 0 })),
         payment_status: payStatus,
         amount_paid: calculatedPaid,
@@ -144,14 +156,17 @@ export default function OrderForm({ kind }: { kind: Kind }) {
       }
       return res;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const savedId = data?.id || editId;
       qc.invalidateQueries({ queryKey: [isSale ? "sales" : "purchases"] });
+      qc.invalidateQueries({ queryKey: ["orders"] });
       if (isEdit) qc.invalidateQueries({ queryKey: [isSale ? "sales" : "purchases", editId] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
       qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["inventory"] });
       qc.invalidateQueries({ queryKey: ["reports"] });
       show(isEdit ? "Order updated successfully" : isSale ? "Sale order created successfully" : "Purchase order created successfully", "success");
-      navigate(isEdit ? `${isSale ? "/sales" : "/purchases"}/${editId}` : (isSale ? "/sales" : "/purchases"));
+      navigate(isEdit ? `${isSale ? "/sales" : "/purchases"}/${savedId}` : (isSale ? "/sales" : "/purchases"));
     },
     onError: (e: any) => show(e?.message || "Failed to save order", "error"),
   });
@@ -168,7 +183,7 @@ export default function OrderForm({ kind }: { kind: Kind }) {
   }
 
   function submit() {
-    if (isSale && !partyId) { show("Select a dealer", "error"); return; }
+    if (isSale && !partyName.trim() && !partyId) { show("Please select a dealer or enter customer name", "error"); return; }
     if (!isSale && !partyName.trim()) { show("Enter supplier name", "error"); return; }
     if (lines.length === 0) { show("Add at least one product", "error"); return; }
     if (lines.some(l => !(parseFloat(l.qty) > 0))) { show("Enter valid quantity for all items", "error"); return; }
@@ -210,15 +225,34 @@ export default function OrderForm({ kind }: { kind: Kind }) {
           <div className="section-title" style={{ marginBottom: 0 }}>Order Details</div>
           {isSale ? (
             <div className="field">
-              <label>Dealer *</label>
-              <select className="input" value={partyId || ""} onChange={e => {
-                const d = dealers.find((x: any) => x.id === e.target.value);
-                setPartyId(e.target.value);
-                setPartyName(d?.shop_name || "");
+              <label>Dealer / Customer *</label>
+              <select className="input" value={partyId || (partyName === "Counter Sale / Walk-in" ? "counter" : "")} onChange={e => {
+                const val = e.target.value;
+                if (val === "counter") {
+                  setPartyId(null);
+                  setPartyName("Counter Sale / Walk-in");
+                } else if (val) {
+                  const d = dealers.find((x: any) => x.id === val);
+                  setPartyId(val);
+                  setPartyName(d?.shop_name || "");
+                } else {
+                  setPartyId(null);
+                  setPartyName("");
+                }
               }}>
-                <option value="">Select dealer…</option>
+                <option value="">Select registered dealer…</option>
+                <option value="counter">🏪 Counter Sale / Walk-in Customer</option>
                 {dealers.map((d: any) => <option key={d.id} value={d.id}>{d.shop_name}</option>)}
               </select>
+              {(!partyId || partyName === "Counter Sale / Walk-in" || !dealers.some((d: any) => d.id === partyId)) && (
+                <input
+                  className="input"
+                  style={{ marginTop: 8 }}
+                  value={partyName}
+                  onChange={e => { setPartyId(null); setPartyName(e.target.value); }}
+                  placeholder="Or enter buyer / dealer name directly (e.g. Counter Sale)"
+                />
+              )}
             </div>
           ) : (
             <div className="field">

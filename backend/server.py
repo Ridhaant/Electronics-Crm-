@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Body
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -291,11 +291,46 @@ async def create_product(body: ProductIn, user=Depends(current_user)):
     doc["id"] = new_id()
     doc["sku"] = doc.get("sku") or doc["model"].upper().replace(" ", "-")[:24]
     opening = max(0.0, float(doc.get("qty_on_hand") or 0.0))
-    doc["opening_stock"] = opening
+    doc["opening_stock"] = 0.0
     doc["qty_on_hand"] = opening
     doc["deleted_at"] = None
     doc["created_at"] = now_iso()
     await db.products.insert_one(doc)
+
+    if opening > 0:
+        rate = float(doc.get("cost_price", 0.0))
+        amt = round(opening * rate, 2)
+        po_doc = {
+            "id": f"po_{new_id()[:8]}",
+            "kind": "purchase",
+            "party_id": None,
+            "party_name": "Worldtech Distributor / Initial Lot",
+            "ref_no": f"PO-INIT-{doc['sku'][:12]}",
+            "date": now_iso(),
+            "credit_days": 0,
+            "due_date": now_iso(),
+            "notes": f"Initial stock intake for {doc['model']}",
+            "items": [{
+                "product_id": doc["id"],
+                "model": doc["model"],
+                "qty": opening,
+                "rate": rate,
+                "cost": rate,
+                "amount": amt,
+            }],
+            "total": amt,
+            "payments": [{
+                "id": new_id(),
+                "amount": amt,
+                "date": now_iso(),
+                "note": "Stock intake settled"
+            }],
+            "invoice_file": None,
+            "deleted_at": None,
+            "created_at": now_iso()
+        }
+        await db.orders.insert_one(po_doc)
+
     return clean(doc)
 
 
@@ -690,6 +725,10 @@ async def update_order_credit_days(oid: str, body: CreditDaysIn, user=Depends(cu
 
 @api_router.post("/orders/{oid}/invoice")
 @api_router.patch("/orders/{oid}/invoice")
+@api_router.post("/sales/{oid}/invoice")
+@api_router.patch("/sales/{oid}/invoice")
+@api_router.post("/purchases/{oid}/invoice")
+@api_router.patch("/purchases/{oid}/invoice")
 async def upload_order_invoice(oid: str, body: dict = Body(...), user=Depends(current_user)):
     o = await db.orders.find_one({"id": oid, "deleted_at": None})
     if not o:
@@ -701,6 +740,8 @@ async def upload_order_invoice(oid: str, body: dict = Body(...), user=Depends(cu
 
 
 @api_router.delete("/orders/{oid}/invoice")
+@api_router.delete("/sales/{oid}/invoice")
+@api_router.delete("/purchases/{oid}/invoice")
 async def delete_order_invoice(oid: str, user=Depends(current_user)):
     o = await db.orders.find_one({"id": oid, "deleted_at": None})
     if not o:
@@ -708,6 +749,17 @@ async def delete_order_invoice(oid: str, user=Depends(current_user)):
     await db.orders.update_one({"id": oid}, {"$set": {"invoice_file": None, "updated_at": now_iso()}})
     updated_o = await db.orders.find_one({"id": oid})
     return serialize_order(updated_o)
+
+
+@api_router.get("/orders/{oid}/invoice")
+@api_router.get("/sales/{oid}/invoice")
+@api_router.get("/purchases/{oid}/invoice")
+async def get_order_invoice(oid: str, user=Depends(current_user)):
+    o = await db.orders.find_one({"id": oid, "deleted_at": None})
+    if not o:
+        raise HTTPException(404, "Order not found")
+    return o.get("invoice_file")
+
 
 
 @api_router.get("/orders/{oid}")

@@ -111,16 +111,37 @@ function getStored<T>(key: string, defaultVal: T): T {
   }
 }
 
+function sanitizeOrderForStorage(order: any): any {
+  if (!order) return order;
+  if (!order.invoice_file) return order;
+  // If invoice_file contains a large base64 data_url, strip it from localStorage
+  // The full data_url is saved in browser IndexedDB for unlimited capacity
+  const { data_url, ...restInvoice } = order.invoice_file;
+  return {
+    ...order,
+    invoice_file: {
+      ...restInvoice,
+      has_attachment: true,
+      has_data: Boolean(data_url || restInvoice.has_data),
+    },
+  };
+}
+
 function setStored<T>(key: string, val: T) {
   try {
     if (Array.isArray(val) && ["orders", "products", "dealers", "expenses"].includes(key)) {
       const deletedIds = getLocalDeletedIds(key);
-      const filtered = val.filter((item: any) => item && item.id && !deletedIds.has(item.id) && !item.deleted_at);
+      let filtered = val.filter((item: any) => item && item.id && !deletedIds.has(item.id) && !item.deleted_at);
+      if (key === "orders") {
+        filtered = filtered.map(sanitizeOrderForStorage);
+      }
       localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(filtered));
       return;
     }
     localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(val));
-  } catch {}
+  } catch (err) {
+    console.warn(`[Storage] Failed to store ${key} in localStorage:`, err);
+  }
 }
 
 // Recalculate inventory dynamically based on purchases and sales ledger
@@ -386,19 +407,66 @@ export function handleMockApi(path: string, method = "GET", body?: any): any {
 
     if (method === "GET") return products;
     if (method === "POST") {
+      const initialStock = Math.max(0, Number(body.opening_stock ?? body.qty_on_hand) || 0);
+      const sku = body.sku || (body.model ? body.model.toUpperCase().replace(/\s+/g, "-").slice(0, 24) : `SKU-${Date.now()}`);
+      const costPrice = Number(body.cost_price) || 0;
+      const sellPrice = Number(body.sell_price) || 0;
+      const newPid = "p_" + Date.now();
+
       const np = {
         ...body,
-        id: "p_" + Date.now(),
-        sku: body.sku || (body.model ? body.model.toUpperCase().replace(/\s+/g, "-").slice(0, 24) : `SKU-${Date.now()}`),
+        id: newPid,
+        sku,
         category: body.category || "Television",
-        cost_price: Number(body.cost_price) || 0,
-        sell_price: Number(body.sell_price) || 0,
-        opening_stock: Math.max(0, Number(body.opening_stock ?? body.qty_on_hand) || 0),
-        qty_on_hand: Math.max(0, Number(body.opening_stock ?? body.qty_on_hand) || 0),
-        purchased_qty: 0,
+        cost_price: costPrice,
+        sell_price: sellPrice,
+        opening_stock: 0,
+        qty_on_hand: initialStock,
+        purchased_qty: initialStock,
         sold_qty: 0,
       };
       products.unshift(np);
+
+      // If initial stock on hand is specified on creation, create a purchase order so it appears in Purchases
+      // and is registered in the official procurement ledger and stock in hand
+      if (initialStock > 0) {
+        const poOrder = {
+          id: "po_" + Date.now(),
+          kind: "purchase",
+          party_id: null,
+          party_name: "Worldtech Distributor / Initial Lot",
+          ref_no: `PO-INIT-${sku.slice(0, 12)}`,
+          date: new Date().toISOString(),
+          credit_days: 0,
+          due_date: new Date().toISOString(),
+          notes: `Opening stock intake for ${np.model}`,
+          items: [
+            {
+              product_id: newPid,
+              model: np.model,
+              qty: initialStock,
+              rate: costPrice,
+              cost: costPrice,
+              amount: Math.round(initialStock * costPrice * 100) / 100,
+            },
+          ],
+          total: Math.round(initialStock * costPrice * 100) / 100,
+          payments: [
+            {
+              id: "pm_" + Date.now(),
+              amount: Math.round(initialStock * costPrice * 100) / 100,
+              date: new Date().toISOString(),
+              note: "Stock intake settled",
+            },
+          ],
+          invoice_file: null,
+          created_at: new Date().toISOString(),
+        };
+        orders.unshift(poOrder);
+        setStored("orders", orders);
+        syncOrderToFirestore(poOrder);
+      }
+
       products = recalculateAllInventory(products, orders);
       setStored("products", products);
       syncProductToFirestore(np);
