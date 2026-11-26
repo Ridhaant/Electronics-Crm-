@@ -75,10 +75,25 @@ Captured via Chromium Playwright against the built static SPA (`1440×900` deskt
   <img src="docs/diagrams/crm-architecture-3d.svg" alt="Electronics CRM 3D Isometric Execution Topology" width="100%" />
 </p>
 
+## 3D GST ITC Waterfall &amp; Multi-Tranche Credit Engine
+
+<p align="center">
+  <img src="docs/diagrams/gst-ledger-3d.svg" alt="Electronics CRM 3D GST Input Tax Credit Waterfall and Credit Aging Engine" width="100%" />
+</p>
+
 ### Engineering Highlights
 - **Graceful Cloud-to-Local Resilience (`frontend/src/api.ts`, `firebaseSync.ts`):** Probes `VITE_API_URL/api/*` when configured, supports optional Firebase real-time sync across distributed tablets, and falls back deterministically to `handleMockApi` when offline or served from GitHub Pages.
 - **Order Settlement & Credit Aging Serializer (`backend/server.py`):** Computes cleared/partial/unpaid status dynamically from multi-tranche payment arrays (`balance`, `due_date`, `is_due_passed`, `age_days`) and reconciles `opening_stock + purchased - sold` atomically across 1,386 lines of FastAPI + Motor async endpoints.
 - **Role-Based Access Control:** Separate owner vs staff permissions for managing cost sheets, P&L waterfalls, and staff activation using Passlib bcrypt hashes and HS256 JWT tokens.
+
+### Skills Applied &amp; Engineering Learnings
+
+| Skill Area | Implemented Technologies &amp; Files | What Was Learned &amp; Proven |
+| :--- | :--- | :--- |
+| **Full-Stack ERP Engineering** | React 19, TypeScript, Vite 8, TanStack Query v5, FastAPI (`1,386` LOC), Motor Async MongoDB (`backend/server.py`) | Structuring invoice orders around multi-tranche payment arrays avoids stale cached totals and derives `balance` and overdue `age_days` consistently. |
+| **Indian GST &amp; Margin Accounting** | 18% GST Input Tax Credit (ITC) waterfall, pre/post-GST profit formulas, per-model stock reconciliation | Explicitly separating inclusive purchase GST from output sales GST stops dealers from over-estimating net profit margins before monthly GST settlement. |
+| **Offline-First Static Architecture** | Adaptive REST -&gt; `handleMockApi` browser fallback (`frontend/src/api.ts`) + HashRouter GitHub Pages build (`sync-docs.js`) | Wrapping network calls inside a clean fallback client enables zero-server live product demonstrations without rewriting page components. |
+| **Auth &amp; Testing Trade-Offs** | Passlib bcrypt hashing, HS256 JWT RBAC (`owner` vs `staff`), `backend/tests/test_server_logic.py` (`6/6` pytest passing) | **Honest Verification Scope:** Backend logic tests (`test_server_logic.py`) pass cleanly under `pytest`; `frontend/tests_crm_logic.mjs` targets TypeScript ES modules using extensionless imports (`./firebaseSync`), which requires a TS loader/bundler rather than bare `node`. |
 
 ---
 
@@ -102,7 +117,7 @@ Electronics-Crm-/
 ├── docker-compose.yml             # 3-container orchestration (MongoDB + FastAPI + Nginx web)
 └── docs/
     ├── index.html & assets/       # Prebuilt GitHub Pages production SPA
-    ├── diagrams/                  # Animated 3D isometric SVGs (crm-3d-hero.svg, crm-architecture-3d.svg)
+    ├── diagrams/                  # Animated 3D isometric SVGs (crm-3d-hero.svg, crm-architecture-3d.svg, gst-ledger-3d.svg)
     └── screenshots/               # 5 live Playwright captures of Dashboard, Sales, Inventory, Reports & Mobile UI
 ```
 
