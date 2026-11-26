@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" width="100%" role="img" aria-label="Soneja Electronics Distribution CRM 3D isometric stack hero">
+  <defs>
+    <radialGradient id="ecBg" cx="68%" cy="46%" r="68%">
+      <stop offset="0%" stop-color="#0d3b32" /><stop offset="55%" stop-color="#071f1c" /><stop offset="100%" stop-color="#030b0d" />
+    </radialGradient>
+    <filter id="ecGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+    <clipPath id="ecClip"><rect width="1200" height="460" rx="18" /></clipPath>
+    <style>
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      @keyframes lev { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+      .l1 { animation: lev 5s ease-in-out infinite; }
+      .l2 { animation: lev 5s ease-in-out infinite 0.5s; }
+    </style>
+  </defs>
+  <g clip-path="url(#ecClip)">
+    <rect width="1200" height="460" fill="url(#ecBg)" />
+    <g stroke="#2dd4bf" stroke-opacity="0.07" stroke-width="1">
+      <path d="M0 365 L1200 365 M0 405 L1200 405 M160 460 L460 330 M440 460 L600 330 M760 460 L780 330 M1020 460 L960 330" />
+    </g>
+
+    <g transform="translate(54, 52)">
+      <rect x="0" y="0" width="335" height="28" rx="14" fill="#0d332c" stroke="#2dd4bf" stroke-opacity="0.5" />
+      <circle cx="16" cy="14" r="4.5" fill="#2dd4bf"><animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" /></circle>
+      <text x="30" y="18.5" fill="#99f6e4" font-size="11.5" font-weight="700" letter-spacing="1.4" class="mono">WHOLESALE DISTRIBUTION ERP &amp; CRM</text>
+
+      <text x="0" y="84" fill="#ffffff" font-size="40" font-weight="800" letter-spacing="-1" class="sans">Electronics CRM</text>
+      <text x="0" y="120" fill="#5eead4" font-size="18" font-weight="600" class="sans">GST-Compliant Invoicing · Margin Analytics · Real-Time Cloud &amp; Local Sync</text>
+      <text x="0" y="150" fill="#cbd5e1" font-size="13.5" class="sans">
+        <tspan x="0" dy="0">Built for Indian television distributors with 18% reverse GST ITC tracking,</tspan>
+        <tspan x="0" dy="20">dealer aging ledgers, WhatsApp links &amp; browser-first GitHub Pages fallback.</tspan>
+      </text>
+
+      <g transform="translate(0, 200)">
+        <rect x="0" y="0" width="150" height="62" rx="10" fill="#09211d" stroke="#2dd4bf" stroke-opacity="0.45" />
+        <text x="14" y="29" fill="#2dd4bf" font-size="22" font-weight="800" class="mono">React 19</text>
+        <text x="14" y="48" fill="#99f6e4" font-size="11.5" class="sans">TypeScript + Vite 8</text>
+
+        <rect x="162" y="0" width="150" height="62" rx="10" fill="#0b1f2c" stroke="#38bdf8" stroke-opacity="0.45" />
+        <text x="176" y="29" fill="#38bdf8" font-size="22" font-weight="800" class="mono">FastAPI</text>
+        <text x="176" y="48" fill="#bae6fd" font-size="11.5" class="sans">Motor Async Mongo</text>
+
+        <rect x="324" y="0" width="146" height="62" rx="10" fill="#1e1a0b" stroke="#fbbf24" stroke-opacity="0.45" />
+        <text x="338" y="29" fill="#fbbf24" font-size="22" font-weight="800" class="mono">18% GST</text>
+        <text x="338" y="48" fill="#fde68a" font-size="11.5" class="sans">ITC + MoM P&amp;L</text>
+      </g>
+
+      <g transform="translate(0, 290)" class="mono" font-size="11.5" font-weight="600">
+        <rect x="0" y="0" width="128" height="26" rx="6" fill="#0d2924" stroke="#2dd4bf" stroke-opacity="0.35" /><text x="12" y="17" fill="#5eead4">TanStack Query</text>
+        <rect x="138" y="0" width="108" height="26" rx="6" fill="#0e2236" stroke="#38bdf8" stroke-opacity="0.35" /><text x="150" y="17" fill="#7dd3fc">JWT + RBAC</text>
+        <rect x="256" y="0" width="108" height="26" rx="6" fill="#281d0a" stroke="#f59e0b" stroke-opacity="0.35" /><text x="268" y="17" fill="#fcd34d">Firebase Sync</text>
+        <rect x="374" y="0" width="96" height="26" rx="6" fill="#102920" stroke="#34d399" stroke-opacity="0.35" /><text x="386" y="17" fill="#6ee7b7">Docker</text>
+      </g>
+    </g>
+
+    <g stroke="#2dd4bf" stroke-width="2" stroke-dasharray="5 5" opacity="0.6">
+      <line x1="855" y1="128" x2="855" y2="335" />
+    </g>
+
+    <g transform="translate(855, 315)"><g class="l2">
+      <polygon points="-155,0 0,76 0,96 -155,20" fill="#1e3a8a" /><polygon points="0,76 155,0 155,20 0,96" fill="#172554" />
+      <polygon points="0,-76 155,0 0,76 -155,0" fill="#2563eb" stroke="#bfdbfe" stroke-width="1.5" />
+      <g transform="matrix(0.866,0.433,-0.866,0.433,-3,2)"><text x="-76" y="4" fill="#fff" font-size="13.5" font-weight="800" class="mono">MONGODB + MOCK</text></g>
+    </g></g>
+
+    <g transform="translate(855, 224)"><g class="l1">
+      <polygon points="-140,0 0,68 0,86 -140,18" fill="#0f766e" /><polygon points="0,68 140,0 140,18 0,86" fill="#115e59" />
+      <polygon points="0,-68 140,0 0,68 -140,0" fill="#14b8a6" stroke="#ccfbf1" stroke-width="1.5" />
+      <g transform="matrix(0.866,0.433,-0.866,0.433,-3,2)"><text x="-76" y="4" fill="#fff" font-size="13.5" font-weight="800" class="mono">FASTAPI + LEDGER</text></g>
+    </g></g>
+
+    <g transform="translate(855, 134)"><g class="l2">
+      <polygon points="-125,0 0,62 0,80 -125,18" fill="#047857" /><polygon points="0,62 125,0 125,18 0,80" fill="#064e3b" />
+      <polygon points="0,-62 125,0 0,62 -125,0" fill="#10b981" stroke="#d1fae5" stroke-width="1.7" />
+      <g transform="matrix(0.866,0.433,-0.866,0.433,-3,2)"><text x="-66" y="4" fill="#fff" font-size="13.5" font-weight="800" class="mono">REACT 19 + GST UI</text></g>
+    </g></g>
+
+    <circle r="4.8" fill="#5eead4" filter="url(#ecGlow)"><animateMotion dur="2.3s" repeatCount="indefinite" path="M855,128 L855,335" /></circle>
+
+    <rect x="0" y="426" width="1200" height="34" fill="#02080a" fill-opacity="0.92" />
+    <text x="54" y="447" fill="#5eead4" font-size="11" class="mono">github.com/Ridhaant/Electronics-Crm-  ·  live: ridhaant.github.io/Electronics-Crm-/</text>
+  </g>
+</svg>
