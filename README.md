@@ -1,151 +1,122 @@
-# Soneja Electronics — Distribution CRM & Inventory Master
+<p align="center">
+  <img src="docs/diagrams/crm-3d-hero.svg" alt="Electronics CRM 3D Isometric Architecture Hero" width="100%" />
+</p>
 
-A modern, production-grade **Full-Stack Web Application** engineered specifically for consumer electronics and television wholesale distributors. Built with high performance, rich aesthetics, and complete multi-device responsiveness (Desktop, Tablet, Mobile browser).
+<h1 align="center">Soneja Electronics — Distribution CRM &amp; Inventory Master</h1>
 
----
+<p align="center">
+  <strong>Full-stack Indian wholesale ERP &amp; distribution CRM featuring 18% GST Input Tax Credit (ITC) deduction math, automatic stock ledger reconciliation, dealer credit aging, and an offline-capable GitHub Pages demo.</strong>
+</p>
 
-## 🚀 Key Modules & Capabilities
+<p align="center">
+  <a href="https://ridhaant.github.io/Electronics-Crm-/">
+    <img src="https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-0f766e?style=for-the-badge&logo=githubpages&logoColor=white" alt="Live Demo on GitHub Pages" />
+  </a>
+  <img src="https://img.shields.io/badge/Frontend-React%2019%20%2B%20TS%206%20%2B%20Vite%208-0284c7?style=for-the-badge&logo=react&logoColor=white" alt="React 19 TypeScript Vite 8" />
+  <img src="https://img.shields.io/badge/Backend-FastAPI%20%2B%20Motor%20MongoDB-059669?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI Motor MongoDB" />
+  <img src="https://img.shields.io/badge/Backend%20Logic%20Tests-6%20%2F%206%20Passing-15803d?style=for-the-badge&logo=pytest&logoColor=white" alt="6/6 Pytest Passing" />
+</p>
 
-### 1. Executive Dashboard (`/`)
-- **Live KPI Grid**: Real-time rollups for Total Sales, Net Profit, Dealer Receivables, Supplier Payables, Total Inventory Valuation, and Units in Stock.
-- **Quick Action Bar**: One-click navigation to create Sales, log Purchases, add Expenses, inspect Inventory, or review Financial Reports.
-- **Critical Stock Alerts**: Real-time badges for TV models with low inventory (≤ 2 units) with instant re-stock indicators.
-- **Recent Activity**: Live stream of latest customer billing records with color-coded settlement badges (`cleared`, `partial`, `unpaid`).
-
-### 2. Sales Invoicing & Receivables (`/sales`)
-- **Interactive Invoicing**: Create sales orders with dealer dropdowns, multi-item line picker, dynamic quantity/rate math, and initial payment recording.
-- **Instant Printable Invoices**: Pre-formatted commercial distribution bills ready to print or save as PDF with buyer info, line item breakdown, and balance due.
-- **Partial Payment Tracking**: Record subsequent payments against open invoices with real-time balance calculations.
-- **Inventory Auto-Sync**: Automatically deducts units from stock upon sale confirmation and restores units upon order deletion.
-
-### 3. Purchase Orders & Inventory Intake (`/purchases`)
-- **Supplier Procurement**: Manage supplier purchase orders and stock arrivals.
-- **Automatic Stock Inflow**: Receiving purchase orders instantly increments stock on hand across affected television SKUs.
-- **Supplier Payables**: Track accounts payable aging and log supplier settlements.
-
-### 4. Inventory Master & Cost Sheet (`/inventory`, `/products`)
-- **Catalog Management**: Add, update, and categorize TV models (Screen size, display technology, Smart OS).
-- **Cost vs. Sell Margin**: Automatically computes gross margin (₹ and %) per unit based on wholesale cost and selling price.
-- **Live Stock Levels**: Searchable and filterable by model name, SKU, or category.
-
-### 5. Dealer Directory & WhatsApp Integration (`/dealers`)
-- **Directory**: Comprehensive records of Mumbai retail partners and authorized dealers.
-- **One-Click WhatsApp & Phone**: Direct `https://wa.me/...` links to start WhatsApp conversations or dial phone numbers directly from the browser.
-- **Outstanding Balance Indicators**: Instantly view unsettled receivables per dealer.
-
-### 6. Daily Operating Expenses (`/expenses`)
-- **Categorized Tracking**: Transport & Freight, Rent, Staff Salaries, Utilities, Marketing, and Miscellaneous.
-- **Summary Cards & Filters**: Fast entry modal with date pickers and category pills.
-
-### 7. Financial Reports & Business Intelligence (`/reports`)
-- **P&L Statement**: Waterfall statement showing Revenue − COGS = Gross Profit − Expenses = Net Profit.
-- **Monthly Volume Comparison**: Visual side-by-side comparison bars for monthly sales vs. procurement.
-- **Top Models Leaderboard**: High-volume television models ranked by sales velocity.
-- **Aging Receivables & Payables**: Filtered tables displaying exact overdue aging days for dealers and suppliers.
-
-### 8. Staff & Permissions Control (`/staff`)
-- **Role-Based Access Control**: Owner-only portal to invite staff members, set credentials, and toggle account activation.
+> **Live Demo (`https://ridhaant.github.io/Electronics-Crm-/`)**: Log in immediately using `owner@soneja.com` / `Soneja@123`. When hosted statically without `VITE_API_URL`, [`frontend/src/api.ts`](frontend/src/api.ts) transparently routes all queries to the browser-resident `handleMockApi` ledger store.
 
 ---
 
-## 🛠️ Tech Stack
+## Live Application Screenshots
 
-- **Frontend**: React 19, TypeScript, Vite 8, TanStack Query v5, React Router v7, Vanilla CSS Design System with Plus Jakarta Sans typography.
-- **Backend**: FastAPI, Motor (Async MongoDB driver), Python-JOSE / PyJWT, Passlib (Bcrypt), Pydantic v2.
-- **Database**: MongoDB (Local or MongoDB Atlas).
-- **Deployment**: Docker, Docker Compose, Vercel SPA configuration (`vercel.json`), Nginx container configuration.
+Captured via Chromium Playwright against the built static SPA (`1440×900` desktop & `390×844` mobile):
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="docs/screenshots/01_dashboard.png"><img src="docs/screenshots/01_dashboard.png" alt="Executive Dashboard with GST ITC Rollups" width="100%" /></a>
+      <br />
+      <strong>1. Executive Dashboard &amp; Net Profit After GST</strong>
+      <br />
+      <sub>Live KPIs tracking ₹25.3L total sales, ₹20.5L receivables, ₹18.4L payables, ₹87.5K ITC credit carried forward, and automated pre/post-GST profit protection.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/screenshots/02_sales_invoicing.png"><img src="docs/screenshots/02_sales_invoicing.png" alt="Wholesale Sales Invoices and Credit Aging" width="100%" /></a>
+      <br />
+      <strong>2. Wholesale Sales Invoicing &amp; Credit Terms</strong>
+      <br />
+      <sub>40 seeded dealer invoices with live settlement filters (<code>All</code> / <code>Unpaid</code> / <code>Partial</code> / <code>Cleared</code>), 30-day due countdowns, and invoice attachments.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="docs/screenshots/03_inventory_margins.png"><img src="docs/screenshots/03_inventory_margins.png" alt="Inventory Master Cost vs Sell Margins" width="100%" /></a>
+      <br />
+      <strong>3. Inventory Master &amp; Margin Reconciliation</strong>
+      <br />
+      <sub>Per-model Worldtech TV stock ledger (purchased − sold), live godown valuation (₹8,62,500), deficit alerts, and automated unit gross margin %.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="docs/screenshots/04_reports_pnl.png"><img src="docs/screenshots/04_reports_pnl.png" alt="Analytics and MoM Financial Reports" width="100%" /></a>
+      <br />
+      <strong>4. P&amp;L Waterfall &amp; MoM Performance Analytics</strong>
+      <br />
+      <sub>Top-selling model rankings, average invoice value, collection efficiency, CSV ledger export, and month-over-month deltas.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <a href="docs/screenshots/05_mobile_crm.png"><img src="docs/screenshots/05_mobile_crm.png" alt="Mobile Responsive Bottom-Tab CRM View" width="160" /></a>
+      <br />
+      <strong>5. Responsive Handheld UI (<code>390×844</code> with Sticky Bottom Navigation)</strong>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 📦 Default Seed Data & Demo Access
+## 3D Hybrid System Architecture
 
-Upon initial launch, the database automatically seeds:
-- **Default Owner Account**:
-  - **Email**: `owner@soneja.com`
-  - **Password**: `Soneja@123`
-- **12 Worldtech TV Models**: 24" to 65" (Smart, BT, Frameless, 4K WebOS, QLED).
-- **16 Mumbai Electronics Dealers**: Pre-populated with contact persons, phone numbers, and locations.
-- **Opening Purchase Order**: Initial stock intake of 87 television units.
+<p align="center">
+  <img src="docs/diagrams/crm-architecture-3d.svg" alt="Electronics CRM 3D Isometric Execution Topology" width="100%" />
+</p>
+
+### Engineering Highlights
+- **Graceful Cloud-to-Local Resilience (`frontend/src/api.ts`, `firebaseSync.ts`):** Probes `VITE_API_URL/api/*` when configured, supports optional Firebase real-time sync across distributed tablets, and falls back deterministically to `handleMockApi` when offline or served from GitHub Pages.
+- **Order Settlement & Credit Aging Serializer (`backend/server.py`):** Computes cleared/partial/unpaid status dynamically from multi-tranche payment arrays (`balance`, `due_date`, `is_due_passed`, `age_days`) and reconciles `opening_stock + purchased - sold` atomically across 1,386 lines of FastAPI + Motor async endpoints.
+- **Role-Based Access Control:** Separate owner vs staff permissions for managing cost sheets, P&L waterfalls, and staff activation using Passlib bcrypt hashes and HS256 JWT tokens.
 
 ---
 
-## 💻 Local Development Setup
+## Program Structure
 
-### Prerequisites
-- Node.js 18+ and npm
-- Python 3.10+
-- MongoDB 6.0+ (running locally or MongoDB Atlas connection string)
-
-### 1. Backend Setup
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-# On Windows:
-.\venv\Scripts\activate
-# On Linux/macOS:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Create .env (copy from .env.example)
-cp .env.example .env
-
-# Run FastAPI server
-uvicorn server:app --reload --host 0.0.0.0 --port 8000
+```text
+Electronics-Crm-/
+├── .github/workflows/deploy.yml   # Automated GitHub Pages workflow publishing ./docs
+├── backend/
+│   ├── server.py                  # FastAPI + Motor async MongoDB API, JWT RBAC & settlement logic (1,386 lines)
+│   ├── scripts/add_sales_orders.py# Wholesale order seed utility
+│   └── tests/                     # test_server_logic.py (6/6 passing) + test_soneja_api.py
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx                # HashRouter routes, TanStack Query v5 & Firebase real-time sync
+│   │   ├── api.ts & auth.tsx      # Adaptive REST + GitHub Pages mock adapter + JWT context
+│   │   ├── *Modal.tsx             # CloudSync, InvoiceViewer, InvoiceUpload & WhatsApp modals
+│   │   └── pages/                 # Dashboard, OrderForm/List/Detail, Inventory, Products, Dealers, Expenses, Reports, Staff, Billing
+│   ├── tests_crm_logic.mjs        # Frontend CRM calculation test script
+│   └── sync-docs.js               # Syncs Vite build output cleanly into ./docs for GitHub Pages
+├── docker-compose.yml             # 3-container orchestration (MongoDB + FastAPI + Nginx web)
+└── docs/
+    ├── index.html & assets/       # Prebuilt GitHub Pages production SPA
+    ├── diagrams/                  # Animated 3D isometric SVGs (crm-3d-hero.svg, crm-architecture-3d.svg)
+    └── screenshots/               # 5 live Playwright captures of Dashboard, Sales, Inventory, Reports & Mobile UI
 ```
-Backend API will be available at: `http://localhost:8000` (API Docs at `http://localhost:8000/docs`).
-
-### 2. Web Frontend Setup
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-Frontend will be available at: `http://localhost:5173` (Vite automatically proxies `/api` to `http://127.0.0.1:8000`).
 
 ---
 
-## 🐳 Docker Deployment (One-Command Launch)
-
-To run the entire stack (MongoDB + FastAPI + Web Frontend) with Docker Compose:
+## Verification & Quick Start
 
 ```bash
+# Verified backend unit logic tests (6 / 6 passing in 5.36s):
+PYTHONPATH=backend pytest backend/tests/test_server_logic.py -v
+
+# Run full Docker Compose stack (MongoDB + FastAPI + Frontend):
 docker-compose up --build -d
+
+# Or run Frontend standalone with built-in mock adapter:
+cd frontend && npm install && npm run dev
 ```
-
-- **Web App**: `http://localhost:3000`
-- **API Backend**: `http://localhost:8000`
-- **MongoDB**: `localhost:27017`
-
----
-
-## 🌐 Remote Cloud Deployment Guide
-
-### Frontend Deployment (Vercel)
-1. Import the GitHub repository into [Vercel](https://vercel.com).
-2. Set **Root Directory** to `frontend`.
-3. Set Environment Variable:
-   - `VITE_API_URL`: `https://your-backend-domain.com`
-4. Click **Deploy**. Vercel will automatically handle client-side routing via `vercel.json`.
-
-### Backend Deployment (Render / Railway)
-1. Create a new **Web Service** pointing to the `backend` folder.
-2. Set Environment Variables:
-   - `MONGO_URL`: `mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority`
-   - `DB_NAME`: `soneja_crm`
-   - `JWT_SECRET`: `<generate-a-secure-random-secret>`
-   - `ACCESS_TOKEN_MINUTES`: `43200`
-3. Build Command: `pip install -r requirements.txt`
-4. Start Command: `uvicorn server:app --host 0.0.0.0 --port 8000`
-
----
-
-## 📄 License
-Private and Proprietary — Soneja Electronics Distribution CRM.
